@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: redis
+  template:
+    metadata:
+      labels:
+        name: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          args: ["--requirepass", "$(REDIS_PWD)"]
+          env:
+            - name: REDIS_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: password.txt
+          volumeMounts:
+            - name: diskredis
+              mountPath: /data
+      volumes:
+        - name: diskredis
+          persistentVolumeClaim:
+            claimName: persistantyuta2claim

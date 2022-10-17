@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: votingapp
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/issuer: letsencrypt-staging
+    cert-manager.io/issuer-kind: Issuer
+    cert-manager.io/issuer-group: cert-manager.io
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: votingapp.simplon-yuta.space
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: votingapp
+            port:
+              number: 80
+  tls: # < placing a host in the TLS config will determine what ends up in the cert's subjectAltNames
+  - hosts:
+    - votingapp.simplon-yuta.space
+    secretName: secret-tls # < cert-manager will store the created certificate in this secret.

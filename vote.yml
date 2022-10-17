@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: votingapp
+spec:
+  selector:
+    matchLabels:
+      name: votingapp
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        name: votingapp
+    spec:
+      containers:
+        - name: votingapp
+          image: whujin11e/public:azure_voting_app
+          env:
+            - name: STRESS_SECS
+              value: "2"
+            - name: REDIS
+              value: "redis"
+            - name: REDIS_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: redis
+                  key: password.txt
+          ports:
+            - containerPort: 80
